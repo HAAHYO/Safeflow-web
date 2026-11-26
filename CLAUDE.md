@@ -74,6 +74,17 @@ ESLint(`eslint.config.mjs` 의 `fsdLayerConfig`)가 다음을 **에러로** 막�
 - 커밋 전 리뷰가 필요하면 `fsd-reviewer` 에이전트를 쓴다 (혼자 하는 프로젝트라 사람 리뷰어 대신).
 - 의존성 추가(`pnpm add`)는 사용자 확인을 받는다.
 
+## 브랜치 전략
+
+```
+feature/* ──▶ develop ──▶ main
+```
+
+- `main`: 배포 브랜치. **`develop` 에서만** 머지해 올린다. 직접 커밋하지 않는다.
+- `develop`: 개발 통합 브랜치. 기능 개발이 끝난 브랜치는 여기로 머지한다.
+- 작업 브랜치는 항상 `develop` 에서 딴다. 이름: `feature/<기능>` · `fix/<버그>` · `refactor/<대상>` · `chore/<작업>` (kebab-case)
+- 작업 브랜치 → `develop` 은 PR(또는 `--no-ff` 머지). 기능 개발이 끝나면 `develop` → `main` 으로 올린다.
+
 ## 커밋 · PR
 
 - 커밋은 사용자가 요청할 때만. 메시지는 `feat: …` / `fix: …` / `refactor: …` / `style: …` / `chore: …` / `test: …` / `docs: …`.
