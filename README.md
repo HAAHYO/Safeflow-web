@@ -44,6 +44,11 @@ src/
 의존 방향은 `app → pages → widgets → features → entities → shared` 이며, ESLint 가 위반을 에러로 막습니다.
 자세한 규칙은 [CLAUDE.md](./CLAUDE.md) 를 참고하세요.
 
+## 브랜치
+
+`feature/*` → `develop` → `main`. 작업은 `develop` 에서 브랜치를 따서 하고, 끝나면 `develop` 에 머지합니다.
+배포할 때 `develop` 을 `main` 으로 올립니다.
+
 ## 품질 장치
 
 - **pre-commit**: lint-staged 가 스테이징된 파일만 ESLint --fix + Prettier
