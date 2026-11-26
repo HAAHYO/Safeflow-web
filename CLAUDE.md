@@ -18,7 +18,7 @@
 ## 명령
 
 ```bash
-pnpm dev            # 개발 서버 (http://localhost:5173)
+pnpm dev            # 개발 서버 (http://localhost:3000)
 pnpm check          # typecheck + lint + test + format:check — 작업을 마치기 전에 반드시 통과
 pnpm test           # vitest run
 pnpm test:watch
