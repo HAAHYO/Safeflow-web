@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+*.tsbuildinfo
+
+# testing
+coverage/
+
+# env — .env.example 만 커밋한다.
+.env
+.env.*
+!.env.example
+
+# claude code — 개인 로컬 설정은 커밋하지 않는다.
+.claude/settings.local.json
+
+# logs
+*.log
+
+# editor / os
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
