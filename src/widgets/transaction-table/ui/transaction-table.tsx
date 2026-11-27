@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSession } from '@/entities/session';
 import {
   FdsStatusBadge,
   ShapReasons,
   type Transaction,
   transactionListQueryOptions,
 } from '@/entities/transaction';
+import { ResolveFalsePositiveButton } from '@/features/resolve-false-positive';
 import { getErrorMessage } from '@/shared/api';
 import { formatLocalDateTime, formatScore, formatWon } from '@/shared/lib/format';
 import { Badge } from '@/shared/ui/badge';
@@ -22,6 +24,11 @@ function JudgementBadge({ isActualFraud }: { isActualFraud: boolean | null }) {
   );
 }
 
+/** 오탐 판정은 FDS_ADMIN 만, 차단됐고 아직 판정하지 않은 거래에만 할 수 있다(백엔드 규칙과 같다). */
+function canResolve(tx: Transaction, isFdsAdmin: boolean) {
+  return isFdsAdmin && tx.fdsStatus === 'BLOCKED' && tx.isActualFraud === null;
+}
+
 function conditions(tx: Transaction) {
   const items = [tx.isOverseas && '해외', tx.deviceChanged && '기기 변경'].filter(Boolean);
   return items.length > 0 ? items.join(' · ') : '-';
@@ -29,6 +36,7 @@ function conditions(tx: Transaction) {
 
 export function TransactionTable() {
   const { data, isPending, isError, error } = useQuery(transactionListQueryOptions());
+  const isFdsAdmin = useSession()?.role === 'FDS_ADMIN';
 
   if (isPending) return <StatusMessage>거래 내역을 불러오는 중…</StatusMessage>;
   if (isError) return <StatusMessage tone="error">{getErrorMessage(error)}</StatusMessage>;
@@ -73,7 +81,11 @@ export function TransactionTable() {
                 <ShapReasons reasons={tx.shapReasons} />
               </td>
               <td>
-                <JudgementBadge isActualFraud={tx.isActualFraud} />
+                {canResolve(tx, isFdsAdmin) ? (
+                  <ResolveFalsePositiveButton transactionId={tx.id} />
+                ) : (
+                  <JudgementBadge isActualFraud={tx.isActualFraud} />
+                )}
               </td>
             </tr>
           ))}

@@ -1,7 +1,8 @@
 import { screen, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
+import { type EmployeeRole, useSessionStore } from '@/entities/session';
 import { renderWithProviders, server } from '@/shared/lib/test';
 
 import { TransactionTable } from './transaction-table';
@@ -64,6 +65,43 @@ describe('TransactionTable', () => {
     renderWithProviders(<TransactionTable />);
 
     expect(await screen.findByText('거래 내역이 없습니다.')).toBeInTheDocument();
+  });
+
+  describe('오탐 판정 버튼', () => {
+    afterEach(() => useSessionStore.getState().clearSession());
+
+    const loginAs = (role: EmployeeRole) =>
+      useSessionStore.getState().setSession({
+        accessToken: 'token',
+        username: 'tester',
+        role,
+        department: '테스트팀',
+        expiresAt: null,
+      });
+
+    it('FDS_ADMIN 에게 차단된 미판정 거래에만 보인다', async () => {
+      loginAs('FDS_ADMIN');
+      mockTransactions([
+        blockedTx,
+        { ...blockedTx, id: 3, customerName: '판정 끝', isActualFraud: false },
+        { ...blockedTx, id: 4, customerName: '정상 거래', fdsStatus: 'NORMAL' },
+      ]);
+      renderWithProviders(<TransactionTable />);
+
+      await screen.findByText('김*준');
+      expect(screen.getAllByRole('button', { name: '오탐 판정' })).toHaveLength(1);
+      expect(screen.getByText('오탐')).toBeInTheDocument();
+    });
+
+    it('CRM_MARKETER 에게는 보이지 않는다', async () => {
+      loginAs('CRM_MARKETER');
+      mockTransactions([blockedTx]);
+      renderWithProviders(<TransactionTable />);
+
+      await screen.findByText('김*준');
+      expect(screen.queryByRole('button', { name: '오탐 판정' })).not.toBeInTheDocument();
+      expect(screen.getByText('미판정')).toBeInTheDocument();
+    });
   });
 
   it('조회에 실패하면 에러를 보여준다', async () => {
