@@ -29,4 +29,14 @@ jobs:
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm test
-      - run: pnpm build
+      # 필수 환경 변수가 빠진 빌드는 실패해야 한다(#11).
+      - name: VITE_API_URL 없이 빌드하면 실패하는지 확인
+        run: |
+          if pnpm build; then
+            echo "::error::VITE_API_URL 없이 빌드가 성공했습니다."
+            exit 1
+          fi
+      - name: 빌드
+        run: pnpm build
+        env:
+          VITE_API_URL: https://api.example.invalid
