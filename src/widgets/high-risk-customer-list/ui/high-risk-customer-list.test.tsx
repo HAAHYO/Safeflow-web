@@ -55,6 +55,7 @@ describe('HighRiskCustomerList', () => {
     expect(card.getByText('대기 중인 케어 조치 1건')).toBeInTheDocument();
     expect(card.getByText('수수료 면제 + VIP 전담 상담')).toBeInTheDocument();
     expect(card.getByText('오탐 판정')).toBeInTheDocument();
+    expect(card.getByRole('button', { name: '발송 처리' })).toBeInTheDocument();
   });
 
   it('대기 중인 케어 조치가 없으면 안내 문구를 보여준다', async () => {

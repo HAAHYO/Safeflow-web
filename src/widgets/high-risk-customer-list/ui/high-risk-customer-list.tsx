@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { ChurnReasons, CustomerGradeBadge, HIGH_RISK_REASON_LABEL } from '@/entities/customer';
 import { FdsStatusBadge } from '@/entities/transaction';
+import { SendCareActionButton } from '@/features/send-care-action';
 import { getErrorMessage } from '@/shared/api';
 import { formatScore } from '@/shared/lib/format';
 import { Badge } from '@/shared/ui/badge';
@@ -14,7 +15,13 @@ import {
 } from '../api/high-risk-customers';
 import styles from './high-risk-customer-list.module.css';
 
-function PendingCareActionItem({ action }: { action: PendingCareAction }) {
+function PendingCareActionItem({
+  action,
+  customerName,
+}: {
+  action: PendingCareAction;
+  customerName: string;
+}) {
   return (
     <li className={styles.action}>
       <div className={styles.actionBody}>
@@ -26,6 +33,11 @@ function PendingCareActionItem({ action }: { action: PendingCareAction }) {
         </span>
         <span className={styles.message}>{action.actionMessage}</span>
       </div>
+      <SendCareActionButton
+        careActionId={action.id}
+        version={action.version}
+        customerName={customerName}
+      />
     </li>
   );
 }
@@ -58,7 +70,7 @@ function HighRiskCustomerItem({ customer }: { customer: HighRiskCustomer }) {
         {customer.pendingCareActions.length > 0 ? (
           <ul className={styles.actions}>
             {customer.pendingCareActions.map((action) => (
-              <PendingCareActionItem key={action.id} action={action} />
+              <PendingCareActionItem key={action.id} action={action} customerName={customer.name} />
             ))}
           </ul>
         ) : (
