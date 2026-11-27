@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { isSessionExpired, type Session } from './session';
+import { isSessionExpired, type Session, sessionSchema } from './session';
 
 type SessionState = {
   session: Session | null;
@@ -21,8 +21,11 @@ export const useSessionStore = create<SessionState>()(
       name: 'safeflow-session',
       storage: createJSONStorage(() => sessionStorage),
       partialize: ({ session }) => ({ session }),
+      // 저장된 값은 형태가 바뀌었거나 조작됐을 수 있으므로 복원할 때 다시 검증한다.
       onRehydrateStorage: () => (state) => {
-        if (state?.session && isSessionExpired(state.session)) state.clearSession();
+        if (!state?.session) return;
+        const parsed = sessionSchema.safeParse(state.session);
+        if (!parsed.success || isSessionExpired(parsed.data)) state.clearSession();
       },
     },
   ),

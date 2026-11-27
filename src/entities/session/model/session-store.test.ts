@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { type Session } from './session';
 import { getAccessToken, useSessionStore } from './session-store';
 
+const STORAGE_KEY = 'safeflow-session';
+
 const session = (expiresAt: number | null): Session => ({
   accessToken: 'token',
   username: 'fds_admin',
@@ -11,9 +13,12 @@ const session = (expiresAt: number | null): Session => ({
   expiresAt,
 });
 
-describe('getAccessToken', () => {
-  afterEach(() => useSessionStore.getState().clearSession());
+afterEach(() => {
+  useSessionStore.getState().clearSession();
+  sessionStorage.clear();
+});
 
+describe('getAccessToken', () => {
   it('세션이 없으면 null', () => {
     expect(getAccessToken()).toBeNull();
   });
@@ -28,6 +33,31 @@ describe('getAccessToken', () => {
     useSessionStore.getState().setSession(session(Date.now() - 1));
 
     expect(getAccessToken()).toBeNull();
+    expect(useSessionStore.getState().session).toBeNull();
+  });
+});
+
+describe('sessionStorage 복원', () => {
+  async function rehydrateWith(stored: unknown) {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ state: { session: stored }, version: 0 }));
+    await useSessionStore.persist.rehydrate();
+  }
+
+  it('유효한 세션은 복원한다', async () => {
+    await rehydrateWith(session(Date.now() + 60_000));
+
+    expect(useSessionStore.getState().session?.username).toBe('fds_admin');
+  });
+
+  it('만료된 세션은 지운다', async () => {
+    await rehydrateWith(session(Date.now() - 1));
+
+    expect(useSessionStore.getState().session).toBeNull();
+  });
+
+  it('형태가 잘못된 세션은 지운다', async () => {
+    await rehydrateWith({ ...session(null), role: 'SUPER_ADMIN' });
+
     expect(useSessionStore.getState().session).toBeNull();
   });
 });
