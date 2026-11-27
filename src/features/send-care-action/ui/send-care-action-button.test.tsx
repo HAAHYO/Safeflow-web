@@ -27,9 +27,14 @@ const sentCareAction = {
   version: 2,
 };
 
-function renderButton() {
+function renderButton(onResult = vi.fn()) {
   const result = renderWithProviders(
-    <SendCareActionButton careActionId={11} version={1} customerName="이서연" />,
+    <SendCareActionButton
+      careActionId={11}
+      version={1}
+      customerName="이서연"
+      onResult={onResult}
+    />,
   );
   result.queryClient.setQueryData(customerKeys.highRisk(), []);
   result.queryClient.setQueryData(careActionKeys.list(), []);
@@ -48,11 +53,18 @@ describe('SendCareActionButton', () => {
         return HttpResponse.json(sentCareAction);
       }),
     );
-    const { queryClient } = renderButton();
+    const onResult = vi.fn();
+    const { queryClient } = renderButton(onResult);
 
     await userEvent.setup().click(screen.getByRole('button', { name: '발송 처리' }));
 
     await vi.waitFor(() => expect(body).toEqual({ version: 1 }));
+    await vi.waitFor(() =>
+      expect(onResult).toHaveBeenCalledWith({
+        tone: 'success',
+        message: '이서연 고객에게 케어 조치를 발송 처리했습니다.',
+      }),
+    );
     expect(window.confirm).toHaveBeenCalledWith('이서연 고객에게 케어 조치를 발송 처리할까요?');
     await vi.waitFor(() =>
       expect(queryClient.getQueryState(customerKeys.highRisk())?.isInvalidated).toBe(true),
@@ -67,10 +79,10 @@ describe('SendCareActionButton', () => {
     // MSW 가 처리되지 않은 요청을 실패시키므로, 요청이 나가면 테스트가 깨진다.
     await userEvent.setup().click(screen.getByRole('button', { name: '발송 처리' }));
 
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(window.confirm).toHaveBeenCalledOnce();
   });
 
-  it('내용이 바뀌었으면(STALE) 서버 메시지를 보여주고 목록을 다시 불러온다', async () => {
+  it('내용이 바뀌었으면(STALE) 서버 메시지를 알리고 목록을 다시 불러온다', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     server.use(
       http.patch(`${API}/api/care-actions/11/send`, () =>
@@ -84,12 +96,16 @@ describe('SendCareActionButton', () => {
         ),
       ),
     );
-    const { queryClient } = renderButton();
+    const onResult = vi.fn();
+    const { queryClient } = renderButton(onResult);
 
     await userEvent.setup().click(screen.getByRole('button', { name: '발송 처리' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      '케어 조치 내용이 변경되었습니다. 다시 확인한 뒤 발송해 주세요.',
+    await vi.waitFor(() =>
+      expect(onResult).toHaveBeenCalledWith({
+        tone: 'error',
+        message: '이서연: 케어 조치 내용이 변경되었습니다. 다시 확인한 뒤 발송해 주세요.',
+      }),
     );
     expect(queryClient.getQueryState(customerKeys.highRisk())?.isInvalidated).toBe(true);
   });
