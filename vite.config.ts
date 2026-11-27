@@ -11,7 +11,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    // 백엔드 local 프로필의 CORS 기본 허용 origin 이 http://localhost:3000 이다.
+    port: 3000,
   },
   test: {
     environment: 'jsdom',

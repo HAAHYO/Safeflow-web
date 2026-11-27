@@ -12,7 +12,7 @@ Vite + React + TypeScript 로 만든 웹 SPA. 구조는 **FSD(Feature-Sliced Des
 ```bash
 pnpm install
 cp .env.example .env   # VITE_API_URL 을 백엔드 주소로
-pnpm dev               # http://localhost:5173
+pnpm dev               # http://localhost:3000
 ```
 
 ## 스크립트
