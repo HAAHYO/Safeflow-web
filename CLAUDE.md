@@ -73,7 +73,7 @@ ESLint(`eslint.config.mjs` 의 `fsdLayerConfig`)가 다음을 **에러로** 막�
 | 파일 수정 **후** | `.claude/hooks/lint-on-edit.mjs`   | ESLint --fix + Prettier. 남은 에러(FSD 위반 등)는 피드백 |
 | 응답 **종료 전** | `.claude/hooks/verify-on-stop.mjs` | `.ts(x)` 변경이 있으면 tsc + 변경 관련 vitest            |
 
-- 커밋 전 리뷰가 필요하면 `fsd-reviewer` 에이전트를 쓴다 (혼자 하는 프로젝트라 사람 리뷰어 대신).
+- `fsd-reviewer` 에이전트 리뷰는 **사용자가 요청할 때만** 돌린다(토큰 절약). 기본 검증은 `pnpm check` 와 PR 의 CI 다.
 - 의존성 추가(`pnpm add`)는 사용자 확인을 받는다.
 
 ## 브랜치 전략
