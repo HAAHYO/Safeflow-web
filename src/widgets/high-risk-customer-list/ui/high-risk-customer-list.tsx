@@ -59,7 +59,7 @@ function HighRiskCustomerItem({
   return (
     <li className={styles.customer} aria-label={`${customer.name} 고객`}>
       <div className={styles.header}>
-        <strong className={styles.name}>{customer.name}</strong>
+        <h2 className={styles.name}>{customer.name}</h2>
         <span className={styles.account}>{customer.accountNumber}</span>
         <CustomerGradeBadge grade={customer.grade} />
         {customer.riskReasons.map((reason) => (
