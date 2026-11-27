@@ -10,7 +10,7 @@ import { AppLayout } from './app-layout';
 import { GuestOnly, RequireAuth, RequireRole } from './guards';
 
 // 라우트 정의는 이 파일에만 둔다. 화면 자체는 pages 계층에 있다.
-// 역할 제한은 백엔드 @PreAuthorize 와 맞추고, 헤더 메뉴(widgets/app-header)도 같이 고친다.
+// 역할 제한은 백엔드 @PreAuthorize 와 맞추고, 사이드바 메뉴(widgets/app-sidebar)도 같이 고친다.
 const router = createBrowserRouter([
   {
     element: <GuestOnly />,

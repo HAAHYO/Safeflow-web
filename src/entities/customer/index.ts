@@ -1,5 +1,7 @@
 export { customerKeys } from './api/customer-keys';
 export {
+  CHURN_HIGH_THRESHOLD,
+  CHURN_WARNING_THRESHOLD,
   churnReasonSchema,
   customerGradeSchema,
   HIGH_RISK_REASON_LABEL,

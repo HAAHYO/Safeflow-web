@@ -1,10 +1,37 @@
 .message {
-  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 48px 16px;
   color: var(--color-text-muted);
   font-size: 14px;
   text-align: center;
 }
 
+.message::before {
+  content: '';
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-bg)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'/%3E%3Cpath d='M12 8v4M12 16h.01'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+}
+
+.loading::before {
+  background: none;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: spin 0.8s linear infinite;
+}
+
 .error {
   color: var(--color-danger);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

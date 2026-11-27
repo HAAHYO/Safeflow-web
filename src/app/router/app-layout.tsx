@@ -1,16 +1,18 @@
 import { Outlet } from 'react-router';
 
-import { AppHeader } from '@/widgets/app-header';
+import { AppSidebar } from '@/widgets/app-sidebar';
 
 import styles from './app-layout.module.css';
 
 export function AppLayout() {
   return (
-    <>
-      <AppHeader />
+    <div className={styles.shell}>
+      <AppSidebar />
       <main className={styles.main}>
-        <Outlet />
+        <div className={styles.content}>
+          <Outlet />
+        </div>
       </main>
-    </>
+    </div>
   );
 }

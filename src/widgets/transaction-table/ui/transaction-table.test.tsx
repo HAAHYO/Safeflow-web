@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -45,7 +46,9 @@ describe('TransactionTable', () => {
 
     expect(cells.getByText('15,000,000원')).toBeInTheDocument();
     expect(cells.getByText('2026.11.27 03:12')).toBeInTheDocument();
-    expect(cells.getByText('해외 · 기기 변경')).toBeInTheDocument();
+    expect(cells.getByText('해외')).toBeInTheDocument();
+    // 조건 배지와 탐지 근거(SHAP) 양쪽에 나온다.
+    expect(cells.getAllByText('기기 변경')).toHaveLength(2);
     expect(cells.getByText('95.0%')).toBeInTheDocument();
     expect(cells.getByText('차단')).toBeInTheDocument();
     expect(cells.getByText('평소 대비 고액')).toBeInTheDocument();
@@ -113,5 +116,54 @@ describe('TransactionTable', () => {
     renderWithProviders(<TransactionTable />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('접근 권한이 없습니다.');
+  });
+});
+
+describe('TransactionTable 필터 · 검색', () => {
+  const normalTx = {
+    ...blockedTx,
+    id: 9,
+    customerName: '박*훈',
+    accountNumber: '110-***-***003',
+    fdsStatus: 'NORMAL',
+    fraudScore: 0.05,
+    isOverseas: false,
+    deviceChanged: false,
+    shapReasons: [],
+  };
+
+  it('상태 필터를 고르면 해당 거래만 보여주고, 필터마다 건수를 보여준다', async () => {
+    mockTransactions([blockedTx, normalTx]);
+    renderWithProviders(<TransactionTable />);
+    await screen.findByText('김*준');
+
+    const filters = within(screen.getByRole('group', { name: '거래 필터' }));
+    expect(filters.getByRole('button', { name: '판정 대기 1건' })).toBeInTheDocument();
+
+    await userEvent.setup().click(filters.getByRole('button', { name: '정상 1건' }));
+
+    expect(screen.queryByText('김*준')).not.toBeInTheDocument();
+    expect(screen.getByText('박*훈')).toBeInTheDocument();
+  });
+
+  it('고객 이름으로 검색한다', async () => {
+    mockTransactions([blockedTx, normalTx]);
+    renderWithProviders(<TransactionTable />);
+    await screen.findByText('김*준');
+
+    await userEvent.setup().type(screen.getByRole('searchbox', { name: '거래 검색' }), '박');
+
+    expect(screen.queryByText('김*준')).not.toBeInTheDocument();
+    expect(screen.getByText('박*훈')).toBeInTheDocument();
+  });
+
+  it('조건에 맞는 거래가 없으면 안내한다', async () => {
+    mockTransactions([blockedTx]);
+    renderWithProviders(<TransactionTable />);
+    await screen.findByText('김*준');
+
+    await userEvent.setup().type(screen.getByRole('searchbox', { name: '거래 검색' }), '없는고객');
+
+    expect(screen.getByText('조건에 맞는 거래가 없습니다.')).toBeInTheDocument();
   });
 });
