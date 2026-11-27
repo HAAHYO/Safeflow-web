@@ -9,7 +9,7 @@ import { HomePage } from './home-page';
 describe('HomePage', () => {
   afterEach(() => useSessionStore.getState().clearSession());
 
-  it('로그인한 직원에게 환영 문구를 보여준다', () => {
+  it('로그인한 직원에게 인사말을 보여준다', () => {
     useSessionStore.getState().setSession({
       accessToken: 'token',
       username: 'fds_admin',
