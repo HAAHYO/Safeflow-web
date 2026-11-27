@@ -54,7 +54,10 @@ describe('FdsDashboard', () => {
     renderWithProviders(<FdsDashboard />);
 
     const status = within(await screen.findByRole('list', { name: 'FDS 상태 분포' }));
-    expect(status.getByText('2건 (50%)')).toBeInTheDocument();
+    // 정상 2 · 주의 0 · 차단 2
+    expect(status.getByText('정상')).toHaveTextContent('정상2건 (50%)');
+    expect(status.getByText('주의')).toHaveTextContent('주의0건 (0%)');
+    expect(status.getByText('차단')).toHaveTextContent('차단2건 (50%)');
     const judgement = within(screen.getByRole('list', { name: '차단 거래 판정 결과' }));
     expect(judgement.getAllByText('1건 (50%)')).toHaveLength(2);
   });
