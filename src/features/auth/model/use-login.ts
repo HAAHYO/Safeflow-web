@@ -18,6 +18,9 @@ export function useLogin({ onSuccess }: { onSuccess?: (session: Session) => void
   const passwordRef = useRef<string | null>(null);
 
   const mutation = useMutation({
+    // 로그인 화면이 사라지면(관찰자가 없어지면) mutation 자체를 캐시에서 바로 지운다.
+    // 응답의 액세스 토큰도 세션 스토어에만 남긴다.
+    gcTime: 0,
     mutationFn: ({ username }: Pick<LoginRequest, 'username'>) => {
       const password = passwordRef.current ?? '';
       passwordRef.current = null;
