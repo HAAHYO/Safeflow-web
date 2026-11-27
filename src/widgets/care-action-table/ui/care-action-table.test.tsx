@@ -1,8 +1,9 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { type EmployeeRole, useSessionStore } from '@/entities/session';
 import { renderWithProviders, server } from '@/shared/lib/test';
 
 import { CareActionTable } from './care-action-table';
@@ -161,5 +162,70 @@ describe('CareActionTable 발송 이력', () => {
       .click(await screen.findByRole('button', { name: '케어 조치 #11 발송 이력 보기' }));
 
     expect(await screen.findByText('아직 발송한 적이 없습니다.')).toBeInTheDocument();
+  });
+});
+
+describe('CareActionTable 발송', () => {
+  afterEach(() => {
+    useSessionStore.getState().clearSession();
+    vi.restoreAllMocks();
+  });
+
+  const loginAs = (role: EmployeeRole) =>
+    useSessionStore.getState().setSession({
+      accessToken: 'token',
+      username: 'tester',
+      role,
+      department: '테스트팀',
+      expiresAt: null,
+    });
+
+  it('CRM 마케터에게는 발송 대기 조치에만 발송 버튼이 보인다', async () => {
+    loginAs('CRM_MARKETER');
+    mockCareActions([pendingAction, sentAction]);
+    renderWithProviders(<CareActionTable />);
+    await screen.findByText('최*아');
+
+    expect(rowOf('최*아').getByRole('button', { name: '발송 처리' })).toBeInTheDocument();
+    expect(rowOf('강*은').queryByRole('button', { name: '발송 처리' })).not.toBeInTheDocument();
+  });
+
+  it('FDS 관리자에게는 발송 버튼이 보이지 않는다', async () => {
+    loginAs('FDS_ADMIN');
+    mockCareActions([pendingAction]);
+    renderWithProviders(<CareActionTable />);
+    await screen.findByText('최*아');
+
+    expect(screen.queryByRole('button', { name: '발송 처리' })).not.toBeInTheDocument();
+  });
+
+  it('발송하면 목록 위에 결과를 알린다', async () => {
+    loginAs('CRM_MARKETER');
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    let body: unknown;
+    let listRequests = 0;
+    server.use(
+      http.get(`${API}/api/care-actions`, () => {
+        listRequests += 1;
+        const item =
+          listRequests === 1
+            ? pendingAction
+            : { ...pendingAction, status: 'SENT', sentBy: 'tester', version: 2 };
+        return HttpResponse.json({ items: [item] });
+      }),
+      http.patch(`${API}/api/care-actions/11/send`, async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json({ id: 11, status: 'SENT', version: 2 });
+      }),
+    );
+    renderWithProviders(<CareActionTable />);
+
+    await userEvent.setup().click(await screen.findByRole('button', { name: '발송 처리' }));
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      '최*아 고객에게 케어 조치를 발송 처리했습니다.',
+    );
+    expect(body).toEqual({ version: 1 });
+    expect(await screen.findByText('tester')).toBeInTheDocument();
   });
 });
