@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import { HomePage } from '@/pages/home';
 import { LoginPage } from '@/pages/login';
 import { NotFoundPage } from '@/pages/not-found';
+import { TransactionsPage } from '@/pages/transactions';
 
 import { AppLayout } from './app-layout';
 import { GuestOnly, RequireAuth } from './guards';
@@ -19,7 +20,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <AppLayout />,
-        children: [{ index: true, element: <HomePage /> }],
+        children: [
+          { index: true, element: <HomePage /> },
+          { path: 'transactions', element: <TransactionsPage /> },
+        ],
       },
     ],
   },
