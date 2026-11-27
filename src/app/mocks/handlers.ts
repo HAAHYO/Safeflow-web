@@ -20,6 +20,9 @@ import {
 
 const api = (path: string) => `${env.VITE_API_URL}${path}`;
 
+/** 예: 2026-11-27T03:00:00+09:00 (초 단위까지) */
+const KST_OFFSET_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+09:00$/;
+
 /** 목 모드에서만 응답을 살짝 늦춰 로딩 상태가 보이게 한다(테스트는 지연 없음). */
 const latency = () => (import.meta.env.MODE === 'mock' ? delay(300) : Promise.resolve());
 
@@ -137,7 +140,11 @@ export const handlers: AnyHandler[] = [
     const customer = findCustomer(body.customerId);
     if (!customer) return problem(404, 'CUSTOMER_NOT_FOUND', '고객을 찾을 수 없습니다.');
 
-    // occurredAt 은 +09:00 오프셋으로 온다. 없으면 현재 KST.
+    // occurredAt 은 KST(+09:00) OffsetDateTime 만 받는다. 형식이 틀린 값을 저장하면
+    // 이후 거래 목록 전체의 스키마 검증이 깨지므로 400 으로 거절한다. 없으면 현재 KST.
+    if (body.occurredAt !== undefined && !KST_OFFSET_DATE_TIME.test(body.occurredAt)) {
+      return problem(400, 'INVALID_INPUT', 'occurredAt: KST(+09:00) ISO-8601 시각이어야 합니다');
+    }
     const occurredAt = body.occurredAt ? body.occurredAt.slice(0, 19) : nowLocalDateTime();
     const txHour = Number(occurredAt.slice(11, 13));
     const isOverseas = body.isOverseas ?? false;
