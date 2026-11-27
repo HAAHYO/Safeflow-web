@@ -1,0 +1,87 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text-subtle);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.search input {
+  width: 180px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.sub {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.customer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.product {
+  font-weight: 600;
+}
+
+.message {
+  display: block;
+  max-width: 420px;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.muted {
+  color: var(--color-text-subtle);
+}
+
+.rowActions {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.notice {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.historyCell {
+  padding: 0 !important;
+  background: var(--color-surface-muted);
+}

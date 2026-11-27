@@ -43,13 +43,13 @@ describe('AppSidebar', () => {
     loginAs('FDS_ADMIN');
     renderWithProviders(<AppSidebar />);
 
-    expect(menuLabels()).toEqual(['대시보드', '거래 내역']);
+    expect(menuLabels()).toEqual(['대시보드', '거래 내역', '케어 조치']);
   });
 
   it('CRM 마케터에게는 이탈 위험 고객 메뉴도 보여준다', () => {
     loginAs('CRM_MARKETER');
     renderWithProviders(<AppSidebar />);
 
-    expect(menuLabels()).toEqual(['대시보드', '거래 내역', '이탈 위험 고객']);
+    expect(menuLabels()).toEqual(['대시보드', '거래 내역', '이탈 위험 고객', '케어 조치']);
   });
 });

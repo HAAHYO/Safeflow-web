@@ -4,3 +4,4 @@ export {
   type CareActionStatus,
   careActionStatusSchema,
 } from './model/care-action';
+export { CareActionStatusBadge } from './ui/care-action-status-badge';

@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 
+import { CareActionsPage } from '@/pages/care-actions';
 import { CrmPage } from '@/pages/crm';
 import { HomePage } from '@/pages/home';
 import { LoginPage } from '@/pages/login';
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> },
           { path: 'transactions', element: <TransactionsPage /> },
+          { path: 'care-actions', element: <CareActionsPage /> },
           {
             element: <RequireRole roles={['CRM_MARKETER']} />,
             children: [{ path: 'crm', element: <CrmPage /> }],
