@@ -64,5 +64,5 @@ src/
 
 - **pre-commit**: lint-staged 가 스테이징된 파일만 ESLint --fix + Prettier
 - **CI** (`.github/workflows/ci.yml`): push / PR 마다 typecheck · lint · format · test · build
-- **Claude Code 하네스** (`.claude/`): 편집 시 자동 lint, 종료 전 타입 검사 · 테스트, 민감 파일 보호,
+- **Claude Code 하네스** (`.claude/`): 편집 시 자동 lint · 포맷, 민감 파일 보호,
   `fsd-slice` · `api-endpoint` 스킬, `fsd-reviewer` 에이전트

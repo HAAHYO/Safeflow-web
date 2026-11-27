@@ -20,7 +20,7 @@
 ```bash
 pnpm dev            # 개발 서버 (http://localhost:3000)
 pnpm dev:mock       # 백엔드 없이 목 데이터로 개발 서버 (아이디 fds_admin / crm_marketer, 비밀번호 아무 값)
-pnpm check          # typecheck + lint + test + format:check — 작업을 마치기 전에 반드시 통과
+pnpm check          # typecheck + lint + test + format:check (CI 가 PR 마다 돌린다. 사용자가 요청할 때만 로컬에서 실행)
 pnpm test           # vitest run
 pnpm test:watch
 pnpm lint:fix
@@ -67,13 +67,12 @@ ESLint(`eslint.config.mjs` 의 `fsdLayerConfig`)가 다음을 **에러로** 막�
 
 `.claude/settings.json` 에 정의된 hook — 우회하지 말고 메시지대로 고친다.
 
-| 시점             | 스크립트                           | 하는 일                                                  |
-| ---------------- | ---------------------------------- | -------------------------------------------------------- |
-| 파일 수정 **전** | `.claude/hooks/protect-files.mjs`  | `.env*`, `pnpm-lock.yaml`, `node_modules` 수정 차단      |
-| 파일 수정 **후** | `.claude/hooks/lint-on-edit.mjs`   | ESLint --fix + Prettier. 남은 에러(FSD 위반 등)는 피드백 |
-| 응답 **종료 전** | `.claude/hooks/verify-on-stop.mjs` | `.ts(x)` 변경이 있으면 tsc + 변경 관련 vitest            |
+| 시점             | 스크립트                          | 하는 일                                                  |
+| ---------------- | --------------------------------- | -------------------------------------------------------- |
+| 파일 수정 **전** | `.claude/hooks/protect-files.mjs` | `.env*`, `pnpm-lock.yaml`, `node_modules` 수정 차단      |
+| 파일 수정 **후** | `.claude/hooks/lint-on-edit.mjs`  | ESLint --fix + Prettier. 남은 에러(FSD 위반 등)는 피드백 |
 
-- `fsd-reviewer` 에이전트 리뷰는 **사용자가 요청할 때만** 돌린다(토큰 절약). 기본 검증은 `pnpm check` 와 PR 의 CI 다.
+- **로컬 검사(`pnpm check` · 테스트 · 타입 검사)와 `fsd-reviewer` 리뷰는 돌리지 않는다**(토큰 절약). 검증은 PR 의 CI 로만 한다. CI 가 실패하면 로그를 보고 고친다. 사용자가 요청하면 그때만 실행한다.
 - 의존성 추가(`pnpm add`)는 사용자 확인을 받는다.
 
 ## 브랜치 전략
@@ -91,5 +90,5 @@ feature/* ──▶ develop ──▶ main
 
 - 커밋은 사용자가 요청할 때만. 메시지는 `feat: …` / `fix: …` / `refactor: …` / `style: …` / `chore: …` / `test: …` / `docs: …`.
 - **한 번에 커밋할 작업은 3개의 커밋으로 쪼갠다.** 리뷰 · 되돌리기가 쉽도록 논리 단위로 나눈다.
-  예) ① 설정 · 의존성 / 타입 · 스키마 → ② 구현 → ③ 테스트 · 문서. 커밋마다 `pnpm check` 가 통과하는 순서를 우선한다.
+  예) ① 설정 · 의존성 / 타입 · 스키마 → ② 구현 → ③ 테스트 · 문서. 각 커밋이 그 자체로 빌드되는 순서를 우선한다.
 - PR 본문은 `.github/pull_request_template.md` 양식을 채운다.
