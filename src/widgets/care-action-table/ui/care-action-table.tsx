@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
-import { CareActionStatusBadge } from '@/entities/care-action';
+import { CareActionStatusBadge, SendHistoryList } from '@/entities/care-action';
 import {
   CHURN_HIGH_THRESHOLD,
   CHURN_WARNING_THRESHOLD,
@@ -9,6 +9,7 @@ import {
 } from '@/entities/customer';
 import { getErrorMessage } from '@/shared/api';
 import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { FilterChips } from '@/shared/ui/filter-chips';
 import { Icon } from '@/shared/ui/icon';
@@ -39,6 +40,8 @@ export function CareActionTable() {
   const { data, isPending, isError, error } = useQuery(careActionListQueryOptions());
   const [filter, setFilter] = useState<Filter>('ALL');
   const [keyword, setKeyword] = useState('');
+  /** 발송 이력을 펼친 케어 조치 ID. 한 번에 하나만 펼친다. */
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const options = useMemo(
     () =>
@@ -92,41 +95,72 @@ export function CareActionTable() {
               <th scope="col">추천 상품 · 안내 문구</th>
               <th scope="col">상태</th>
               <th scope="col">발송자</th>
+              <th scope="col">
+                <span className={styles.srOnly}>작업</span>
+              </th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((action) => (
-              <tr key={action.id}>
-                <td>
-                  <strong>#{action.id}</strong>
-                  <span className={styles.sub}>거래 #{action.transactionId}</span>
-                </td>
-                <td>
-                  <span className={styles.customer}>
-                    {action.customerName}
-                    <CustomerGradeBadge grade={action.customerGrade} />
-                    {action.isFalsePositiveVictim && <Badge tone="danger">오탐 피해</Badge>}
-                  </span>
-                  <span className={styles.sub}>{action.accountNumber}</span>
-                </td>
-                <td>
-                  <ScoreBar
-                    label="이탈 점수"
-                    value={action.churnScore}
-                    warningAt={CHURN_WARNING_THRESHOLD}
-                    dangerAt={CHURN_HIGH_THRESHOLD}
-                  />
-                </td>
-                <td data-wrap>
-                  <span className={styles.product}>{action.recommendedProduct}</span>
-                  <span className={styles.message}>{action.actionMessage}</span>
-                </td>
-                <td>
-                  <CareActionStatusBadge status={action.status} />
-                </td>
-                <td>{action.sentBy ?? <span className={styles.muted}>-</span>}</td>
-              </tr>
-            ))}
+            {rows.map((action) => {
+              const isExpanded = expandedId === action.id;
+              const historyId = `care-action-history-${action.id}`;
+              return (
+                <Fragment key={action.id}>
+                  <tr>
+                    <td>
+                      <strong>#{action.id}</strong>
+                      <span className={styles.sub}>거래 #{action.transactionId}</span>
+                    </td>
+                    <td>
+                      <span className={styles.customer}>
+                        {action.customerName}
+                        <CustomerGradeBadge grade={action.customerGrade} />
+                        {action.isFalsePositiveVictim && <Badge tone="danger">오탐 피해</Badge>}
+                      </span>
+                      <span className={styles.sub}>{action.accountNumber}</span>
+                    </td>
+                    <td>
+                      <ScoreBar
+                        label="이탈 점수"
+                        value={action.churnScore}
+                        warningAt={CHURN_WARNING_THRESHOLD}
+                        dangerAt={CHURN_HIGH_THRESHOLD}
+                      />
+                    </td>
+                    <td data-wrap>
+                      <span className={styles.product}>{action.recommendedProduct}</span>
+                      <span className={styles.message}>{action.actionMessage}</span>
+                    </td>
+                    <td>
+                      <CareActionStatusBadge status={action.status} />
+                    </td>
+                    <td>{action.sentBy ?? <span className={styles.muted}>-</span>}</td>
+                    <td>
+                      <span className={styles.rowActions}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-expanded={isExpanded}
+                          aria-controls={isExpanded ? historyId : undefined}
+                          aria-label={`케어 조치 #${action.id} 발송 이력 ${isExpanded ? '접기' : '보기'}`}
+                          onClick={() => setExpandedId(isExpanded ? null : action.id)}
+                        >
+                          이력
+                          <Icon name="chevronDown" size={14} />
+                        </Button>
+                      </span>
+                    </td>
+                  </tr>
+                  {isExpanded && (
+                    <tr id={historyId}>
+                      <td colSpan={7} className={styles.historyCell}>
+                        <SendHistoryList careActionId={action.id} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </Table>
       )}

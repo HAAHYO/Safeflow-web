@@ -109,3 +109,57 @@ describe('CareActionTable', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('서버 오류가 발생했습니다.');
   });
 });
+
+describe('CareActionTable 발송 이력', () => {
+  it('이력을 펼치면 발송 이력을 불러와 보여주고, 다시 누르면 접는다', async () => {
+    mockCareActions([sentAction]);
+    server.use(
+      http.get(`${API}/api/care-actions/3/send-history`, () =>
+        HttpResponse.json({
+          items: [
+            {
+              id: 1,
+              sentBy: 'crm_marketer',
+              sentAt: '2026-11-25T09:30:00',
+              recommendedProduct: '안심차단 서비스',
+              actionMessage: '평소와 다른 거래가 감지되어 확인 중입니다.',
+              careActionVersion: 1,
+            },
+          ],
+        }),
+      ),
+    );
+    const user = userEvent.setup();
+    renderWithProviders(<CareActionTable />);
+
+    await user.click(await screen.findByRole('button', { name: '케어 조치 #3 발송 이력 보기' }));
+
+    const history = await screen.findByRole('region', { name: '케어 조치 #3 발송 이력' });
+    expect(
+      await within(history).findByText('2026.11.25 09:30 · crm_marketer · 버전 1'),
+    ).toBeInTheDocument();
+    expect(
+      within(history).getByText('평소와 다른 거래가 감지되어 확인 중입니다.'),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: '케어 조치 #3 발송 이력 접기' }));
+
+    expect(
+      screen.queryByRole('region', { name: '케어 조치 #3 발송 이력' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('발송한 적이 없으면 안내한다', async () => {
+    mockCareActions([pendingAction]);
+    server.use(
+      http.get(`${API}/api/care-actions/11/send-history`, () => HttpResponse.json({ items: [] })),
+    );
+    renderWithProviders(<CareActionTable />);
+
+    await userEvent
+      .setup()
+      .click(await screen.findByRole('button', { name: '케어 조치 #11 발송 이력 보기' }));
+
+    expect(await screen.findByText('아직 발송한 적이 없습니다.')).toBeInTheDocument();
+  });
+});
