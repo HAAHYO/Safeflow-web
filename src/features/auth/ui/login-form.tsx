@@ -49,7 +49,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           {getErrorMessage(loginMutation.error)}
         </p>
       )}
-      <Button type="submit" fullWidth disabled={loginMutation.isPending}>
+      <Button type="submit" size="lg" fullWidth disabled={loginMutation.isPending}>
         {loginMutation.isPending ? '로그인 중…' : '로그인'}
       </Button>
     </form>
