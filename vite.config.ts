@@ -1,10 +1,28 @@
+import { rm } from 'node:fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 
 import react from '@vitejs/plugin-react';
+import { type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
-  plugins: [react()],
+/** 목 모드가 아닌 빌드에서는 public/ 에서 복사된 MSW 워커를 지운다. */
+function excludeMockWorker(mode: string): Plugin {
+  let outDir = 'dist';
+  return {
+    name: 'exclude-mock-worker',
+    apply: 'build',
+    configResolved(config) {
+      outDir = config.build.outDir;
+    },
+    async closeBundle() {
+      if (mode === 'mock') return;
+      await rm(`${outDir}/mockServiceWorker.js`, { force: true });
+    },
+  };
+}
+
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), excludeMockWorker(mode)],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -25,7 +43,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/shared/lib/test/**', 'src/app/main.tsx'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/shared/lib/test/**',
+        'src/app/main.tsx',
+        'src/app/mocks/browser.ts',
+      ],
     },
   },
-});
+}));
