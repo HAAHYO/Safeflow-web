@@ -10,6 +10,7 @@ type NavItem = { to: string; label: string; roles: EmployeeRole[] };
 /** 메뉴는 역할별로 보인다. 백엔드 권한(@PreAuthorize)과 맞춘다. */
 const NAV_ITEMS: NavItem[] = [
   { to: '/transactions', label: '거래 내역', roles: ['FDS_ADMIN', 'CRM_MARKETER'] },
+  { to: '/crm', label: '이탈 위험 고객', roles: ['CRM_MARKETER'] },
 ];
 
 export function AppHeader() {

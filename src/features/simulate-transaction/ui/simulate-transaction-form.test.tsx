@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { careActionKeys } from '@/entities/care-action';
+import { customerKeys } from '@/entities/customer';
 import { renderWithProviders, server } from '@/shared/lib/test';
 
 import { SimulateTransactionForm } from './simulate-transaction-form';
@@ -45,7 +47,9 @@ describe('SimulateTransactionForm', () => {
       }),
     );
     const user = userEvent.setup();
-    renderWithProviders(<SimulateTransactionForm />);
+    const { queryClient } = renderWithProviders(<SimulateTransactionForm />);
+    queryClient.setQueryData(customerKeys.highRisk(), []);
+    queryClient.setQueryData(careActionKeys.list(), []);
 
     await user.type(screen.getByLabelText('고객 ID'), '3');
     await user.type(screen.getByLabelText('금액(원)'), '15,000,000');
@@ -66,8 +70,10 @@ describe('SimulateTransactionForm', () => {
     expect(result).toHaveTextContent('95.0%');
     expect(result).toHaveTextContent('차단된 거래라 잔액이 차감되지 않았습니다.');
     expect(result).toHaveTextContent('고객 케어 조치가 생성되었습니다.');
-    // 성공하면 거래 목록을 다시 불러온다.
+    // 성공하면 거래 목록을 다시 불러오고, 이탈 점수 · 케어 조치가 바뀌므로 그 목록도 무효화한다.
     await expect.poll(() => transactionListRequests).toBe(2);
+    expect(queryClient.getQueryState(customerKeys.highRisk())?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(careActionKeys.list())?.isInvalidated).toBe(true);
   });
 
   it('발생 시각을 비우면 보내지 않는다', async () => {

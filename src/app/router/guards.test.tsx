@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { type Session, useSessionStore } from '@/entities/session';
 
-import { GuestOnly, RequireAuth } from './guards';
+import { GuestOnly, RequireAuth, RequireRole } from './guards';
 
 const session: Session = {
   accessToken: 'token',
@@ -64,5 +64,37 @@ describe('라우트 가드', () => {
     act(() => useSessionStore.getState().clearSession());
 
     expect(screen.getByText('로그인 화면')).toBeInTheDocument();
+  });
+});
+
+describe('RequireRole', () => {
+  afterEach(() => useSessionStore.getState().clearSession());
+
+  function renderCrm() {
+    const router = createMemoryRouter(
+      [
+        {
+          element: <RequireRole roles={['CRM_MARKETER']} />,
+          children: [{ path: '/crm', element: <p>CRM 화면</p> }],
+        },
+      ],
+      { initialEntries: ['/crm'] },
+    );
+    render(<RouterProvider router={router} />);
+  }
+
+  it('허용된 역할이면 화면을 보여준다', () => {
+    useSessionStore.getState().setSession(session);
+    renderCrm();
+
+    expect(screen.getByText('CRM 화면')).toBeInTheDocument();
+  });
+
+  it('허용되지 않은 역할이면 권한 없음 화면을 보여준다', () => {
+    useSessionStore.getState().setSession({ ...session, role: 'FDS_ADMIN' });
+    renderCrm();
+
+    expect(screen.getByRole('heading', { name: '접근 권한이 없습니다' })).toBeInTheDocument();
+    expect(screen.queryByText('CRM 화면')).not.toBeInTheDocument();
   });
 });
