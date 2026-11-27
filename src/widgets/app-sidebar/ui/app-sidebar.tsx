@@ -18,6 +18,12 @@ const NAV_ITEMS: NavItem[] = [
     roles: ['FDS_ADMIN', 'CRM_MARKETER'],
   },
   { to: '/crm', label: '이탈 위험 고객', icon: 'users', roles: ['CRM_MARKETER'] },
+  {
+    to: '/care-actions',
+    label: '케어 조치',
+    icon: 'send',
+    roles: ['FDS_ADMIN', 'CRM_MARKETER'],
+  },
 ];
 
 export function AppSidebar() {
