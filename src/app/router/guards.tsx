@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
 
-import { useSession } from '@/entities/session';
+import { type EmployeeRole, useSession } from '@/entities/session';
+import { ForbiddenPage } from '@/pages/forbidden';
 
 type FromState = { from?: string } | null;
 
@@ -12,6 +13,17 @@ export function RequireAuth() {
   if (!session) {
     return <Navigate to="/login" replace state={{ from: `${pathname}${search}${hash}` }} />;
   }
+  return <Outlet />;
+}
+
+/**
+ * 허용된 역할이 아니면 권한 없음 화면을 보여준다. RequireAuth 안쪽에서 쓴다.
+ * 화면만 막는 것이고, 실제 권한 검사는 백엔드(@PreAuthorize)가 한다.
+ */
+export function RequireRole({ roles }: { roles: EmployeeRole[] }) {
+  const session = useSession();
+
+  if (!session || !roles.includes(session.role)) return <ForbiddenPage />;
   return <Outlet />;
 }
 

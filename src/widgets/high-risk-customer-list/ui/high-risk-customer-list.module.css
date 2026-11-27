@@ -1,0 +1,105 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.customer {
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.name {
+  font-size: 17px;
+}
+
+.account {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.score {
+  margin-left: auto;
+  text-align: right;
+}
+
+.scoreValue {
+  display: block;
+  color: var(--color-danger);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.scoreLabel {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.section {
+  margin-top: 14px;
+}
+
+.sectionTitle {
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.action {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.actionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.actionTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.message {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.muted {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
