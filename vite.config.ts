@@ -1,4 +1,5 @@
 import { rm } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 
 import react from '@vitejs/plugin-react';
@@ -7,16 +8,17 @@ import { defineConfig } from 'vitest/config';
 
 /** 목 모드가 아닌 빌드에서는 public/ 에서 복사된 MSW 워커를 지운다. */
 function excludeMockWorker(mode: string): Plugin {
-  let outDir = 'dist';
+  let workerPath = '';
   return {
     name: 'exclude-mock-worker',
     apply: 'build',
     configResolved(config) {
-      outDir = config.build.outDir;
+      // outDir 은 root 기준 상대 경로일 수 있어 root 로 풀어 둔다.
+      workerPath = resolve(config.root, config.build.outDir, 'mockServiceWorker.js');
     },
     async closeBundle() {
       if (mode === 'mock') return;
-      await rm(`${outDir}/mockServiceWorker.js`, { force: true });
+      await rm(workerPath, { force: true });
     },
   };
 }
