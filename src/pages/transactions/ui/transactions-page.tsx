@@ -7,6 +7,8 @@ import { Icon } from '@/shared/ui/icon';
 import { PageHeader } from '@/shared/ui/page-header';
 import { TransactionStats, TransactionTable } from '@/widgets/transaction-table';
 
+const SIMULATOR_ID = 'transaction-simulator';
+
 export function TransactionsPage() {
   const [isSimulatorOpen, setSimulatorOpen] = useState(false);
 
@@ -20,23 +22,22 @@ export function TransactionsPage() {
             variant={isSimulatorOpen ? 'secondary' : 'primary'}
             onClick={() => setSimulatorOpen((open) => !open)}
             aria-expanded={isSimulatorOpen}
-            aria-controls="transaction-simulator"
+            aria-controls={SIMULATOR_ID}
           >
             <Icon name="play" size={16} />
             {isSimulatorOpen ? '시뮬레이션 닫기' : '거래 시뮬레이션'}
           </Button>
         }
       />
-      {isSimulatorOpen && (
-        <div id="transaction-simulator">
-          <Card
-            title="거래 시뮬레이션"
-            description="가상의 거래를 발생시켜 FDS 가 어떻게 판단하는지 확인합니다."
-          >
-            <SimulateTransactionForm />
-          </Card>
-        </div>
-      )}
+      {/* 닫아도 언마운트하지 않고 숨긴다: aria-controls 대상이 늘 있고, 입력하던 값도 남는다. */}
+      <div id={SIMULATOR_ID} hidden={!isSimulatorOpen}>
+        <Card
+          title="거래 시뮬레이션"
+          description="가상의 거래를 발생시켜 FDS 가 어떻게 판단하는지 확인합니다."
+        >
+          <SimulateTransactionForm />
+        </Card>
+      </div>
       <TransactionStats />
       <TransactionTable />
     </>

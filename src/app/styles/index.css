@@ -72,8 +72,10 @@ select {
   font: inherit;
 }
 
+/* outline 을 투명하게 남겨 두면 고대비(forced-colors) 모드에서 시스템 색으로 다시 보인다. */
 :focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   box-shadow: var(--focus-ring);
 }
 

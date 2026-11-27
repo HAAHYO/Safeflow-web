@@ -51,7 +51,7 @@
 }
 
 .highlights li::before {
-  content: '✓';
+  content: '✓' / '';
   margin-right: 10px;
   font-weight: 700;
 }

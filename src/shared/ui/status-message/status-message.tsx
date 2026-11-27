@@ -16,6 +16,7 @@ export function StatusMessage({ tone = 'muted', children }: PropsWithChildren<{ 
   return (
     <p
       className={tone === 'loading' ? `${styles.message} ${styles.loading}` : styles.message}
+      role={tone === 'loading' ? 'status' : undefined}
       aria-busy={tone === 'loading' || undefined}
     >
       {children}

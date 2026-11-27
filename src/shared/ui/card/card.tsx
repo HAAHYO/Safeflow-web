@@ -1,4 +1,4 @@
-import { type PropsWithChildren, type ReactNode } from 'react';
+import { type PropsWithChildren, type ReactNode, useId } from 'react';
 
 import styles from './card.module.css';
 
@@ -12,12 +12,18 @@ type CardProps = PropsWithChildren<{
 }>;
 
 export function Card({ title, description, actions, flush = false, children }: CardProps) {
+  const titleId = useId();
+
   return (
-    <section className={styles.card} aria-label={title}>
+    <section className={styles.card} aria-labelledby={title ? titleId : undefined}>
       {(title || actions) && (
         <div className={styles.header}>
           <div>
-            {title && <h2 className={styles.title}>{title}</h2>}
+            {title && (
+              <h2 id={titleId} className={styles.title}>
+                {title}
+              </h2>
+            )}
             {description && <p className={styles.description}>{description}</p>}
           </div>
           {actions}
