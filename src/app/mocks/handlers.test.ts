@@ -91,6 +91,20 @@ describe('목 모드 API', () => {
     });
   });
 
+  it('발생 시각 형식이 틀리면 400 으로 거절하고 저장하지 않는다', async () => {
+    const token = await login('fds_admin');
+
+    const { status, json } = await call('POST', '/api/transactions/simulate', {
+      token,
+      body: { customerId: 5, amount: 1000, occurredAt: '2026-11-27 03:00' },
+    });
+    const list = await call('GET', '/api/transactions', { token });
+
+    expect(status).toBe(400);
+    expect(json.code).toBe('INVALID_INPUT');
+    expect(list.json.items).toHaveLength(12);
+  });
+
   it('오탐 판정하면 고객이 이탈 위험 목록에 오르고, 케어 조치 version 이 올라간다', async () => {
     const admin = await login('fds_admin');
     const crm = await login('crm_marketer');
