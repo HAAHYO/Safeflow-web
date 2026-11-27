@@ -19,6 +19,7 @@
 
 ```bash
 pnpm dev            # 개발 서버 (http://localhost:3000)
+pnpm dev:mock       # 백엔드 없이 목 데이터로 개발 서버 (아이디 fds_admin / crm_marketer, 비밀번호 아무 값)
 pnpm check          # typecheck + lint + test + format:check — 작업을 마치기 전에 반드시 통과
 pnpm test           # vitest run
 pnpm test:watch
@@ -54,6 +55,7 @@ ESLint(`eslint.config.mjs` 의 `fsdLayerConfig`)가 다음을 **에러로** 막�
 ## 컨벤션
 
 - 파일명 kebab-case (`user-card.tsx`), 컴포넌트는 PascalCase **named export + 함수 선언**. default export 금지.
+- 백엔드 API 를 붙이거나 바꾸면 목 모드 핸들러(`src/app/mocks`)도 같이 맞춘다.
 - 테스트는 대상 파일 옆에 `*.test.ts(x)`. 렌더링은 `renderWithProviders` (`@/shared/lib/test`).
 - 백엔드 응답은 항상 zod 로 parse. query key 는 슬라이스의 key factory 로만 만든다.
 - 타입 import 는 `import { type X }` (ESLint 가 자동 수정).

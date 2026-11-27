@@ -51,7 +51,7 @@ function fsdLayerConfig(layer) {
 }
 
 export default defineConfig(
-  globalIgnores(['dist/**', 'coverage/**', '**/*.d.ts']),
+  globalIgnores(['dist/**', 'coverage/**', '**/*.d.ts', 'public/mockServiceWorker.js']),
   js.configs.recommended,
   tseslint.configs.recommended,
   {

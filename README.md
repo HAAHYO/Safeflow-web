@@ -15,11 +15,22 @@ cp .env.example .env   # VITE_API_URL 을 백엔드 주소로
 pnpm dev               # http://localhost:3000
 ```
 
+### 백엔드 없이 화면 보기 (목 모드)
+
+```bash
+pnpm dev:mock          # http://localhost:3000
+```
+
+브라우저의 MSW 가 API 를 대신 응답합니다(`src/app/mocks`). 아이디 `fds_admin` 또는 `crm_marketer`,
+비밀번호는 아무 값이나 입력하면 됩니다. 데이터는 메모리에만 있어 새로고침하면 처음 상태로 돌아갑니다.
+일반 빌드(`pnpm build`)에는 목 코드가 들어가지 않습니다.
+
 ## 스크립트
 
 | 명령                 | 설명                                           |
 | -------------------- | ---------------------------------------------- |
 | `pnpm dev`           | 개발 서버                                      |
+| `pnpm dev:mock`      | 백엔드 없이 목 데이터로 개발 서버              |
 | `pnpm build`         | 프로덕션 빌드 (`dist/`)                        |
 | `pnpm preview`       | 빌드 결과 미리보기                             |
 | `pnpm check`         | typecheck + lint + test + format:check 한 번에 |
