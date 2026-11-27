@@ -46,6 +46,37 @@ describe('LoginForm', () => {
     });
   });
 
+  it('비밀번호는 요청에만 쓰고 캐시에 남기지 않는다(#12)', async () => {
+    let body: unknown;
+    server.use(
+      http.post(`${API}/api/auth/login`, async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json({
+          accessToken: 'header.e30.sig',
+          role: 'FDS_ADMIN',
+          department: '이상거래탐지팀',
+        });
+      }),
+    );
+    const { queryClient, unmount } = renderWithProviders(<LoginForm />);
+
+    await submit('fds_admin', 'top-secret-pw');
+
+    await vi.waitFor(() => expect(useSessionStore.getState().session).not.toBeNull());
+    expect(body).toEqual({ username: 'fds_admin', password: 'top-secret-pw' });
+    const cached = JSON.stringify(
+      queryClient
+        .getMutationCache()
+        .getAll()
+        .map((m) => m.state),
+    );
+    expect(cached).not.toContain('top-secret-pw');
+
+    // 로그인 화면이 사라지면 mutation 자체가 캐시에서 빠진다.
+    unmount();
+    await vi.waitFor(() => expect(queryClient.getMutationCache().getAll()).toHaveLength(0));
+  });
+
   it('실패하면 서버 메시지를 보여준다', async () => {
     server.use(
       http.post(`${API}/api/auth/login`, () =>
