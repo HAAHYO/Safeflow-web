@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { renderWithProviders, server } from '@/shared/lib/test';
 
@@ -81,5 +82,60 @@ describe('HighRiskCustomerList', () => {
     renderWithProviders(<HighRiskCustomerList />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('접근 권한이 없습니다.');
+  });
+});
+
+describe('HighRiskCustomerList 발송 결과 안내', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  /** 발송 뒤 다시 불러오면 해당 케어 조치가 대기 목록에서 빠진다. */
+  function mockRefetchWithoutPending() {
+    let requests = 0;
+    server.use(
+      http.get(`${API}/api/crm/high-risk-customers`, () => {
+        requests += 1;
+        const pending = requests === 1 ? victim.pendingCareActions : [];
+        return HttpResponse.json({ items: [{ ...victim, pendingCareActions: pending }] });
+      }),
+    );
+  }
+
+  it('발송에 성공하면 항목이 사라져도 성공 안내를 보여준다', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    mockRefetchWithoutPending();
+    server.use(
+      http.patch(`${API}/api/care-actions/11/send`, () =>
+        HttpResponse.json({ id: 11, status: 'SENT', version: 2 }),
+      ),
+    );
+    renderWithProviders(<HighRiskCustomerList />);
+
+    await userEvent.setup().click(await screen.findByRole('button', { name: '발송 처리' }));
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      '이서연 고객에게 케어 조치를 발송 처리했습니다.',
+    );
+    expect(await screen.findByText('대기 중인 케어 조치가 없습니다.')).toBeInTheDocument();
+  });
+
+  it('이미 발송된 조치(ALREADY_SENT)면 항목이 사라져도 에러를 보여준다', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    mockRefetchWithoutPending();
+    server.use(
+      http.patch(`${API}/api/care-actions/11/send`, () =>
+        HttpResponse.json(
+          { status: 409, detail: '이미 발송한 케어 조치입니다.', code: 'CARE_ACTION_ALREADY_SENT' },
+          { status: 409 },
+        ),
+      ),
+    );
+    renderWithProviders(<HighRiskCustomerList />);
+
+    await userEvent.setup().click(await screen.findByRole('button', { name: '발송 처리' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      '이서연: 이미 발송한 케어 조치입니다.',
+    );
+    expect(await screen.findByText('대기 중인 케어 조치가 없습니다.')).toBeInTheDocument();
   });
 });
