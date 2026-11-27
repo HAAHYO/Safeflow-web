@@ -1,0 +1,38 @@
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  padding: 24px;
+  text-align: center;
+}
+
+.code {
+  color: var(--color-primary);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.title {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.description {
+  margin: 6px 0 20px;
+  color: var(--color-text-muted);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}

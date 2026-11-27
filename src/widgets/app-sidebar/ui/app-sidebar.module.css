@@ -1,0 +1,136 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding: 20px 14px;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.active,
+.active:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 8px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.userText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.userText strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 좁은 화면: 위쪽 가로 막대로 바꾼다. */
+@media (max-width: 900px) {
+  .sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    height: auto;
+    padding: 10px 16px;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .nav {
+    flex-direction: row;
+  }
+
+  .navLink {
+    white-space: nowrap;
+  }
+
+  .user {
+    padding: 0;
+    border-top: none;
+  }
+
+  .userText {
+    display: none;
+  }
+}

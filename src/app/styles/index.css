@@ -1,0 +1,85 @@
+:root {
+  /* 색 — 중립 */
+  --color-bg: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-border: #e3e8ef;
+  --color-border-strong: #cdd5df;
+  --color-text: #111827;
+  --color-text-muted: #64748b;
+  --color-text-subtle: #94a3b8;
+
+  /* 색 — 브랜드 · 상태 */
+  --color-primary: #3157e6;
+  --color-primary-hover: #2645c4;
+  --color-primary-soft: #eef2ff;
+  --color-danger: #d92d20;
+  --color-danger-bg: #fef3f2;
+  --color-warning: #b54708;
+  --color-warning-bg: #fffaeb;
+  --color-success: #067647;
+  --color-success-bg: #ecfdf3;
+  --color-info: #175cd3;
+  --color-info-bg: #eff8ff;
+
+  /* 모양 */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgb(16 24 40 / 5%);
+  --shadow: 0 1px 3px rgb(16 24 40 / 8%), 0 1px 2px rgb(16 24 40 / 4%);
+  --focus-ring: 0 0 0 3px rgb(49 87 230 / 25%);
+
+  /* 레이아웃 */
+  --sidebar-width: 240px;
+
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-family:
+    'Pretendard Variable',
+    Pretendard,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Malgun Gothic',
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* outline 을 투명하게 남겨 두면 고대비(forced-colors) 모드에서 시스템 색으로 다시 보인다. */
+:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+}
+
+/* 숫자 열이 흔들리지 않도록 */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
