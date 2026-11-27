@@ -60,10 +60,8 @@ export function LoginPage() {
           <LoginForm />
           {isMockMode && (
             <aside className={styles.mockHint} aria-label="목 모드 안내">
-              <strong>목 모드</strong> · 백엔드 없이 예시 데이터로 동작합니다.
-              <br />
-              아이디 <code>fds_admin</code>(이상거래탐지) 또는 <code>crm_marketer</code>(CRM),
-              비밀번호는 아무 값이나 입력하세요.
+              <strong>목 모드</strong> · 아이디 <code>fds_admin</code> 또는{' '}
+              <code>crm_marketer</code>, 비밀번호는 아무 값이나 입력하세요.
             </aside>
           )}
         </main>
