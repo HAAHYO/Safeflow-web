@@ -1,6 +1,6 @@
 .list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
   gap: 16px;
   margin: 0;
   padding: 0;
@@ -8,56 +8,65 @@
 }
 
 .customer {
-  padding: 20px;
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
 }
 
 .header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 12px;
+  gap: 6px 10px;
 }
 
 .name {
   font-size: 17px;
+  font-weight: 700;
 }
 
 .account {
   color: var(--color-text-muted);
   font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 .score {
-  margin-left: auto;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--color-surface-muted);
 }
 
-.scoreValue {
-  display: block;
-  color: var(--color-danger);
-  font-size: 22px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.2;
+.score > span:last-child {
+  flex: 1;
 }
 
 .scoreLabel {
   color: var(--color-text-muted);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .section {
-  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .sectionTitle {
-  margin-bottom: 6px;
   color: var(--color-text-muted);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .actions {
@@ -71,12 +80,13 @@
 
 .action {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  background: var(--color-surface);
 }
 
 .actionBody {
@@ -100,15 +110,15 @@
 }
 
 .muted {
-  color: var(--color-text-muted);
+  color: var(--color-text-subtle);
   font-size: 13px;
 }
 
 .notice {
-  margin: 0 0 12px;
-  padding: 10px 12px;
+  margin: 0;
+  padding: 10px 14px;
   border-radius: var(--radius);
-  font-size: 14px;
+  font-weight: 500;
 }
 
 .success {

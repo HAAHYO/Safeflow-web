@@ -139,3 +139,30 @@ describe('HighRiskCustomerList 발송 결과 안내', () => {
     expect(await screen.findByText('대기 중인 케어 조치가 없습니다.')).toBeInTheDocument();
   });
 });
+
+describe('HighRiskCustomerList 요약 · 필터', () => {
+  const highChurnOnly = {
+    ...victim,
+    customerId: 7,
+    name: '조예준',
+    isFalsePositiveVictim: false,
+    riskReasons: ['HIGH_CHURN_SCORE'],
+    pendingCareActions: [],
+  };
+
+  it('요약 수치를 보여주고, 위험 사유로 거를 수 있다', async () => {
+    mockHighRisk([victim, highChurnOnly]);
+    renderWithProviders(<HighRiskCustomerList />);
+    await screen.findByRole('listitem', { name: '이서연 고객' });
+
+    const stats = within(screen.getByLabelText('이탈 위험 요약'));
+    expect(stats.getByText('이탈 위험 고객').nextSibling).toHaveTextContent('2');
+    expect(stats.getByText('오탐 피해 고객').nextSibling).toHaveTextContent('1');
+
+    const filters = within(screen.getByRole('group', { name: '고객 필터' }));
+    await userEvent.setup().click(filters.getByRole('button', { name: '케어 대기 1건' }));
+
+    expect(screen.getByRole('listitem', { name: '이서연 고객' })).toBeInTheDocument();
+    expect(screen.queryByRole('listitem', { name: '조예준 고객' })).not.toBeInTheDocument();
+  });
+});

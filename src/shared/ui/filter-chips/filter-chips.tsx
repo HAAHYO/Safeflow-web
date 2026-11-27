@@ -29,6 +29,7 @@ export function FilterChips<T extends string>({
           type="button"
           className={styles.chip}
           aria-pressed={option.value === value}
+          aria-label={option.count === undefined ? undefined : `${option.label} ${option.count}건`}
           onClick={() => onChange(option.value)}
         >
           {option.label}
