@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { careActionKeys } from '@/entities/care-action';
+import { customerKeys } from '@/entities/customer';
 import { transactionKeys } from '@/entities/transaction';
 import { renderWithProviders, server } from '@/shared/lib/test';
 
@@ -73,11 +75,15 @@ describe('ResolveFalsePositiveButton', () => {
     );
     const { queryClient } = renderWithProviders(<ResolveFalsePositiveButton transactionId={7} />);
     queryClient.setQueryData(transactionKeys.list(), []);
+    queryClient.setQueryData(customerKeys.highRisk(), []);
+    queryClient.setQueryData(careActionKeys.list(), []);
 
     await userEvent.setup().click(screen.getByRole('button', { name: '오탐 판정' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('이미 판정이 끝난 거래입니다.');
-    // 목록이 오래됐다는 뜻이므로 실패해도 거래 목록을 무효화한다.
+    // 목록이 오래됐다는 뜻이므로 실패해도 거래 · 고객 · 케어 조치 목록을 무효화한다.
     expect(queryClient.getQueryState(transactionKeys.list())?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(customerKeys.highRisk())?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(careActionKeys.list())?.isInvalidated).toBe(true);
   });
 });
