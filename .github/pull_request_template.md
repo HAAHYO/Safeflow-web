@@ -37,7 +37,7 @@
 - [ ] 백엔드 응답을 zod 스키마로 검증한다
 - [ ] 새 환경 변수는 `.env.example` 과 `src/shared/config/env.ts` 에 반영했다
 - [ ] 비밀 값이 코드나 `VITE_` 환경 변수에 들어가지 않았다
-- [ ] `fsd-reviewer` 에이전트 리뷰를 받았다
+- [ ] (요청한 경우) `fsd-reviewer` 에이전트 리뷰를 받았다
 
 ## 백엔드 연동
 
