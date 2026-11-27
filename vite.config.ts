@@ -23,8 +23,28 @@ function excludeMockWorker(mode: string): Plugin {
   };
 }
 
+/**
+ * 필수 환경 변수가 없으면 빌드를 실패시킨다.
+ * 앱은 시작할 때 env 를 zod 로 검증하므로, 값이 빠진 채 빌드되면 배포 후 첫 화면부터 깨진다.
+ */
+function requireBuildEnv(names: string[]): Plugin {
+  return {
+    name: 'require-build-env',
+    apply: 'build',
+    configResolved(config) {
+      const missing = names.filter((name) => !String(config.env[name] ?? '').trim());
+      if (missing.length > 0) {
+        throw new Error(
+          `빌드에 필요한 환경 변수가 없습니다: ${missing.join(', ')}. ` +
+            '.env(.production) 파일이나 배포 환경 변수에 설정해 주세요.',
+        );
+      }
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), excludeMockWorker(mode)],
+  plugins: [react(), excludeMockWorker(mode), requireBuildEnv(['VITE_API_URL'])],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
