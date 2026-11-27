@@ -28,7 +28,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   return (
     <form
       className={styles.form}
-      onSubmit={handleSubmit((values) => loginMutation.mutate(values))}
+      onSubmit={handleSubmit((values) => loginMutation.submit(values))}
       noValidate
     >
       <TextField
