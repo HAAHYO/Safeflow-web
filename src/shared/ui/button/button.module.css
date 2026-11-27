@@ -7,11 +7,25 @@
   padding: 0 14px;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  font: inherit;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.sm {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.lg {
+  height: 44px;
+  padding: 0 18px;
+  font-size: 15px;
 }
 
 .button:disabled {
@@ -30,12 +44,22 @@
 
 .secondary {
   background: var(--color-surface);
-  border-color: var(--color-border);
+  border-color: var(--color-border-strong);
   color: var(--color-text);
 }
 
 .secondary:not(:disabled):hover {
+  background: var(--color-surface-muted);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.ghost:not(:disabled):hover {
   background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .danger {

@@ -1,0 +1,51 @@
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--color-surface-muted);
+}
+
+.table [data-align='right'] {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.table [data-wrap] {
+  min-width: 200px;
+  white-space: normal;
+}
+
+/* 행 강조(차단 거래 등) */
+.table tr[data-highlight='danger'] td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-danger);
+}

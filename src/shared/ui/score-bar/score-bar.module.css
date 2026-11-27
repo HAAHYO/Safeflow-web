@@ -1,0 +1,44 @@
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.track {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eef2f6;
+}
+
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-success);
+}
+
+.warning .fill {
+  background: #f79009;
+}
+
+.danger .fill {
+  background: var(--color-danger);
+}
+
+.value {
+  min-width: 44px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.danger .value {
+  color: var(--color-danger);
+}
+
+.warning .value {
+  color: var(--color-warning);
+}
