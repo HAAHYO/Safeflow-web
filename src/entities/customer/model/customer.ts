@@ -45,3 +45,8 @@ const CHURN_FEATURE_LABEL: Record<string, string> = {
 export function getChurnFeatureLabel(feature: string): string {
   return CHURN_FEATURE_LABEL[feature] ?? feature;
 }
+
+/** 백엔드 고위험 기준(CrmService.HIGH_CHURN_THRESHOLD). */
+export const CHURN_HIGH_THRESHOLD = 0.6;
+/** 화면에서 주의 색으로 보여주는 기준(백엔드 규칙 아님). */
+export const CHURN_WARNING_THRESHOLD = 0.4;

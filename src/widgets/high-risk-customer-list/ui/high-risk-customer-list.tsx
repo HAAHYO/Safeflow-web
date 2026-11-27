@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import {
+  CHURN_HIGH_THRESHOLD,
+  CHURN_WARNING_THRESHOLD,
   ChurnReasons,
   CustomerGradeBadge,
   HIGH_RISK_REASON_LABEL,
@@ -16,10 +18,6 @@ import { FilterChips } from '@/shared/ui/filter-chips';
 import { ScoreBar } from '@/shared/ui/score-bar';
 import { StatCard, StatGrid } from '@/shared/ui/stat-card';
 import { StatusMessage } from '@/shared/ui/status-message';
-
-/** 백엔드 고위험 기준(이탈 점수 0.60 이상). 0.40 이상은 주의 색으로 보여준다. */
-const CHURN_HIGH_THRESHOLD = 0.6;
-const CHURN_WARNING_THRESHOLD = 0.4;
 
 import {
   type HighRiskCustomer,

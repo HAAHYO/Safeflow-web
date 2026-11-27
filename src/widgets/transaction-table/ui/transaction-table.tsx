@@ -3,7 +3,10 @@ import { useMemo, useState } from 'react';
 
 import { useSession } from '@/entities/session';
 import {
+  FDS_BLOCK_THRESHOLD,
+  FDS_WARNING_THRESHOLD,
   FdsStatusBadge,
+  isAwaitingJudgement,
   ShapReasons,
   type Transaction,
   transactionListQueryOptions,
@@ -19,11 +22,6 @@ import { ScoreBar } from '@/shared/ui/score-bar';
 import { StatusMessage } from '@/shared/ui/status-message';
 import { Table } from '@/shared/ui/table';
 
-import {
-  FDS_BLOCK_THRESHOLD,
-  FDS_WARNING_THRESHOLD,
-  isAwaitingJudgement,
-} from '../lib/transaction';
 import styles from './transaction-table.module.css';
 
 type Filter = 'ALL' | 'AWAITING' | 'BLOCKED' | 'WARNING' | 'NORMAL';

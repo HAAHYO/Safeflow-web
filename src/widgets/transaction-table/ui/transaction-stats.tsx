@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { transactionListQueryOptions } from '@/entities/transaction';
+import {
+  FDS_BLOCK_THRESHOLD,
+  FDS_WARNING_THRESHOLD,
+  isAwaitingJudgement,
+  transactionListQueryOptions,
+} from '@/entities/transaction';
+import { formatScore } from '@/shared/lib/format';
 import { StatCard, StatGrid } from '@/shared/ui/stat-card';
-
-import { isAwaitingJudgement } from '../lib/transaction';
 
 /** 거래 요약 수치. 거래 목록과 같은 쿼리(캐시)를 쓴다. */
 export function TransactionStats() {
@@ -17,13 +21,13 @@ export function TransactionStats() {
       <StatCard
         label="차단"
         value={count((tx) => tx.fdsStatus === 'BLOCKED')}
-        hint="사기 점수 80% 이상"
+        hint={`사기 점수 ${formatScore(FDS_BLOCK_THRESHOLD)} 이상`}
         tone="danger"
       />
       <StatCard
         label="주의"
         value={count((tx) => tx.fdsStatus === 'WARNING')}
-        hint="사기 점수 50% 이상"
+        hint={`사기 점수 ${formatScore(FDS_WARNING_THRESHOLD)} 이상`}
         tone="warning"
       />
       <StatCard
